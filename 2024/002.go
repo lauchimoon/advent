@@ -19,23 +19,36 @@ func main() {
     defer f.Close()
 
     scanner := bufio.NewScanner(f)
-    count := 0
+    lines := []string{}
     for scanner.Scan() {
-        if IsSafe(scanner.Text()) {
+        lines = append(lines, scanner.Text())
+    }
+
+    fmt.Printf("Part 1: %d\n", Part1(lines))
+    fmt.Printf("Part 2: %d\n", Part2(lines))
+}
+
+func Part1(lines []string) int {
+    count := 0
+    for _, line := range lines {
+        if IsSafe(SequenceToSlice(line)) {
             count++
         }
     }
-    fmt.Println(count)
+    return count
 }
 
-func IsSafe(seq string) bool {
+func SequenceToSlice(seq string) []int64 {
     split := strings.Split(seq, " ")
     list := []int64{}
     for _, s := range split {
         x, _ := strconv.ParseInt(s, 10, 64)
         list = append(list, x)
     }
+    return list
+}
 
+func IsSafe(list []int64) bool {
     return (AllInc(list) || AllDec(list)) && CorrectDiff(list)
 }
 
@@ -75,4 +88,30 @@ func Abs(x int64) int64 {
         return -x
     }
     return x
+}
+
+func Part2(lines []string) int {
+    total := 0
+    for _, s := range lines {
+        l := SequenceToSlice(s)
+        idx := 0
+        for idx < len(l) {
+            if IsSafe(SliceDelete(l, idx)) {
+                total++
+                break
+            }
+            idx++
+        }
+    }
+    return total
+}
+
+func SliceDelete(s []int64, i int) []int64 {
+    sNew := []int64{}
+    for idx := range s {
+        if idx != i {
+            sNew = append(sNew, s[idx])
+        }
+    }
+    return sNew
 }
