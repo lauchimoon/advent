@@ -18,30 +18,55 @@ func main() {
     }
     defer f.Close()
 
-    scanner := bufio.NewScanner(f); scanner.Scan()
-    src := scanner.Text()
-    newSrc := src
-    ss := strings.Fields(newSrc)
-    newSrcSlice := []string{}
+    scanner := bufio.NewScanner(f)
+    scanner.Scan()
+    stones := LoadStones(scanner.Text())
 
-    for i := 0; i < 25; i++ {
-        newSrcSlice = []string{}
-        for _, s := range ss {
-            if s == "0" {
-                newSrcSlice = append(newSrcSlice, "1")
-            } else if len(s) % 2 == 0 {
-                mid := len(s)/2
-                x, _ := strconv.ParseInt(s[:mid], 10, 64)
-                newSrcSlice = append(newSrcSlice, strconv.FormatInt(x, 10))
-                x, _ = strconv.ParseInt(s[mid:], 10, 64)
-                newSrcSlice = append(newSrcSlice, strconv.FormatInt(x, 10))
-            } else {
-                x, _ := strconv.ParseInt(s, 10, 64)
-                newSrcSlice = append(newSrcSlice, strconv.FormatInt(x*2024, 10))
+    fmt.Printf("Part 1: %v\n", Blink(stones, 25))
+    fmt.Printf("Part 2: %v\n", Blink(stones, 75))
+}
+
+func LoadStones(seq string) map[int64]int64 {
+    stones := map[int64]int64{}
+    for _, s := range strings.Fields(seq) {
+        x, _ := strconv.ParseInt(s, 10, 64)
+        stones[x]++
+    }
+
+    return stones
+}
+
+func Blink(stones map[int64]int64, n int) int64 {
+    var total int64 = 0
+    for i := 0; i < n; i++ {
+        newStones := map[int64]int64{}
+        for val, count := range stones {
+            for _, x := range UpdateStone(val) {
+                newStones[x] += count
             }
         }
-        newSrc = strings.Join(newSrcSlice, " ")
-        ss = strings.Fields(newSrc)
+        stones = newStones
     }
-    fmt.Println(len(newSrcSlice))
+
+    for _, count := range stones {
+        total += count
+    }
+    return total
+}
+
+func UpdateStone(x int64) []int64 {
+    if x == 0 {
+        return []int64{1}
+    }
+
+    sx := strconv.FormatInt(x, 10)
+    lenSx := len(sx)
+    if lenSx % 2 == 0 {
+        mid := lenSx/2
+        left, _ := strconv.ParseInt(sx[:mid], 10, 64)
+        right, _ := strconv.ParseInt(sx[mid:], 10, 64)
+        return []int64{left, right}
+    }
+
+    return []int64{2024*x}
 }
