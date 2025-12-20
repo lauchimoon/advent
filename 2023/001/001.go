@@ -11,7 +11,7 @@ import (
     "github.com/dlclark/regexp2"
 )
 
-const FILEPATH = "./resources/001input.txt"
+const FILEPATH = "../resources/001input.txt"
 
 func main() {
     f, err := os.Open(FILEPATH)
