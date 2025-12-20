@@ -19,10 +19,9 @@ func main() {
 
     scanner := bufio.NewScanner(f)
     scanner.Scan()
-    src := scanner.Text()
+    labels := strings.Split(scanner.Text(), ",")
     total := 0
-
-    for _, s := range strings.Split(src, ",") {
+    for _, s := range labels {
         total += HASH(s)
     }
     fmt.Println(total)
