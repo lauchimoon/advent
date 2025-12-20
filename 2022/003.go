@@ -4,7 +4,9 @@ import (
     "bufio"
     "fmt"
     "log"
+    "maps"
     "os"
+    "slices"
     "unicode"
 )
 
@@ -17,10 +19,19 @@ func main() {
     }
     defer f.Close()
 
+    rucksacks := []string{}
     scanner := bufio.NewScanner(f)
-    total := 0
     for scanner.Scan() {
-        compartment := scanner.Text()
+        rucksacks = append(rucksacks, scanner.Text())
+    }
+
+    fmt.Printf("Part 1: %d\n", Part1(rucksacks))
+    fmt.Printf("Part 2: %d\n", Part2(rucksacks))
+}
+
+func Part1(rucksacks []string) int {
+    total := 0
+    for _, compartment := range rucksacks {
         mid := len(compartment)/2
         firstHalf := compartment[:mid]
         secondHalf := compartment[mid:]
@@ -28,7 +39,7 @@ func main() {
         priority := GetElementPriority(commonElement)
         total += priority
     }
-    fmt.Println(total)
+    return total
 }
 
 func FindCommonType(firstHalf, secondHalf string) rune {
@@ -48,4 +59,43 @@ func GetElementPriority(element rune) int {
     } else {
         return int(element - 'A' + 1) + 26
     }
+}
+
+func Part2(rucksacks []string) int {
+    total := 0
+    i := 0
+    for i < len(rucksacks)/3 {
+        commonElement := FindCommonThree(rucksacks[3*i:(3*i + 3)])
+        priority := GetElementPriority(commonElement)
+        total += priority
+        i++
+    }
+
+    return total
+}
+
+func FindCommonThree(rucksacks []string) rune {
+    first := rucksacks[0]
+    second := rucksacks[1]
+    third := rucksacks[2]
+
+    commonMap := map[rune]bool{}
+    for _, c := range first {
+        commonMap[c] = true
+    }
+
+    commonMap = Intersect(commonMap, second)
+    commonMap = Intersect(commonMap, third)
+
+    return slices.Collect(maps.Keys(commonMap))[0]
+}
+
+func Intersect(common map[rune]bool, s string) map[rune]bool {
+    newCommon := map[rune]bool{}
+    for _, c := range s {
+        if common[c] {
+            newCommon[c] = true
+        }
+    }
+    return newCommon
 }
