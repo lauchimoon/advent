@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "os"
+    "sort"
     "strconv"
 )
 
@@ -32,7 +33,16 @@ func main() {
         }
     }
 
-    fmt.Println(Max(calories))
+    // Make sure to append last value
+    calories = append(calories, total)
+
+    sort.Slice(calories, func(i, j int) bool {
+        return calories[i] > calories[j]
+    })
+
+    sumTopThree := calories[0] + calories[1] + calories[2]
+    fmt.Printf("Part 1: %v\n", Max(calories))
+    fmt.Printf("Part 2: %v\n", sumTopThree)
 }
 
 func Max(slice []int64) int64 {
