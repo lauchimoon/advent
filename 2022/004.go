@@ -18,10 +18,20 @@ func main() {
     }
     defer f.Close()
 
+    pairs := []string{}
     scanner := bufio.NewScanner(f)
-    total := 0
     for scanner.Scan() {
-        pair := strings.Split(scanner.Text(), ",")
+        pairs = append(pairs, scanner.Text())
+    }
+
+    fmt.Printf("Part 1: %d\n", Part1(pairs))
+    fmt.Printf("Part 2: %d\n", Part2(pairs))
+}
+
+func Part1(pairs []string) int {
+    total := 0
+    for _, line := range pairs {
+        pair := strings.Split(line, ",")
         range1 := MakeRange(pair[0])
         range2 := MakeRange(pair[1])
 
@@ -29,7 +39,7 @@ func main() {
             total++
         }
     }
-    fmt.Println(total)
+    return total
 }
 
 func MakeRange(rangeStr string) []int64 {
@@ -41,9 +51,30 @@ func MakeRange(rangeStr string) []int64 {
 }
 
 func IsContained(range1 []int64, range2 []int64) bool {
-    leftmost1, leftmost2 := range1[0], range2[0]
-    rightmost1, rightmost2 := range1[1], range2[1]
+    x1, x2 := range1[0], range2[0]
+    y1, y2 := range1[1], range2[1]
 
-    return (leftmost2 >= leftmost1 && rightmost2 <= rightmost1) ||
-           (leftmost1 >= leftmost2 && rightmost1 <= rightmost2)
+    return (x2 >= x1 && y2 <= y1) ||
+           (x1 >= x2 && y1 <= y2)
+}
+
+func Part2(pairs []string) int {
+    total := 0
+    for _, line := range pairs {
+        pair := strings.Split(line, ",")
+        range1 := MakeRange(pair[0])
+        range2 := MakeRange(pair[1])
+
+        if RangesOverlap(range1, range2) {
+            total++
+        }
+    }
+    return total
+}
+
+func RangesOverlap(range1, range2 []int64) bool {
+    x1, x2 := range1[0], range2[0]
+    y1, y2 := range1[1], range2[1]
+
+    return max(x1, x2) - min(y1, y2) <= 0
 }
