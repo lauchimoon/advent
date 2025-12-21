@@ -23,6 +23,7 @@ func main() {
     }
 
     fmt.Printf("Part 1: %d\n", Part1(answers))
+    fmt.Printf("Part 2: %d\n", Part2(answers))
 }
 
 func Part1(answers []string) int {
@@ -47,4 +48,57 @@ func GetNumberAnswers(answers string) int {
     }
 
     return len(questionsAnswered)
+}
+
+func Part2(answers []string) int {
+    groups := GetGroups(answers)
+    total := 0
+
+    for _, g := range groups {
+        total += GetNumberAllAnswered(g)
+    }
+
+    return total
+}
+
+func GetGroups(answers []string) [][]string {
+    filtered := []string{}
+    for _, answer := range answers {
+        if answer == "" {
+            filtered = append(filtered, answer)
+        }
+    }
+
+    groups := make([][]string, len(filtered) + 1)
+    i := 0
+
+    for _, answer := range answers {
+        if answer != "" {
+            groups[i] = append(groups[i], answer)
+        } else {
+            i++
+        }
+    }
+
+    return groups
+}
+
+func GetNumberAllAnswered(group []string) int {
+    count := map[rune]int{}
+    lenGroup := len(group)
+    total := 0
+
+    for _, g := range group {
+        for _, c := range g {
+            count[c]++
+        }
+    }
+
+    for _, v := range count {
+        if v == lenGroup {
+            total++
+        }
+    }
+
+    return total
 }
