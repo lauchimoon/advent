@@ -18,13 +18,13 @@ func main() {
 
     scanner := bufio.NewScanner(f)
     scanner.Scan()
-    idx := FindMarkerIndex(scanner.Text())
-    fmt.Println(idx + 4)
+    fmt.Printf("Part 1: %d\n", FindMarkerIndex(scanner.Text(), 4) + 4)
+    fmt.Printf("Part 2: %d\n", FindMarkerIndex(scanner.Text(), 14) + 14)
 }
 
-func FindMarkerIndex(stream string) int {
-    for i := 0; i < len(stream)-4; i++ {
-        if AllDifferent(stream[i:i+4]) {
+func FindMarkerIndex(stream string, distinct int) int {
+    for i := 0; i < len(stream)-distinct; i++ {
+        if AllDifferent(stream[i:i+distinct]) {
                return i
         }
     }
