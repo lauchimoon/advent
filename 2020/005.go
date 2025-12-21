@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "os"
+    "slices"
 )
 
 const FILEPATH = "./resources/005input.txt"
@@ -23,6 +24,7 @@ func main() {
     }
 
     fmt.Printf("Part 1: %d\n", Part1(seats))
+    fmt.Printf("Part 2: %d\n", Part2(seats))
 }
 
 func Part1(seats []string) int {
@@ -34,6 +36,28 @@ func Part1(seats []string) int {
         }
     }
     return maxSeatId
+}
+
+func Part2(seats []string) int {
+    ids := []int{}
+    for _, seat := range seats {
+        seatId := GetRow(seat)*8 + GetCol(seat)
+        ids = append(ids, seatId)
+    }
+
+    for row := 0; row < 128; row++ {
+        for col := 0; col < 8; col++ {
+            id := row*8 + col
+            if slices.Index(ids, id) == -1 {
+                // Calculated based on graphic representation
+                // of free/unexistent seats
+                if id > 74 {
+                    return id
+                }
+            }
+        }
+    }
+    return -1
 }
 
 func GetRow(seat string) int {
