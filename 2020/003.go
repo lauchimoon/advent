@@ -23,13 +23,16 @@ func main() {
     }
 
     fmt.Printf("Part 1: %d\n", Part1(lines))
+    fmt.Printf("Part 2: %d\n", Part2(lines))
 }
 
 func Part1(lines []string) int {
+    return CountTrees(lines, 1, 3)
+}
+
+func CountTrees(lines []string, dy, dx int) int {
     width := len(lines[0])
     height := len(lines)
-    dy := 1
-    dx := 3
     total := 0
     y := dy
     x := dx % width
@@ -41,6 +44,23 @@ func Part1(lines []string) int {
 
         y += dy
         x = (x + dx) % width
+    }
+
+    return total
+}
+
+func Part2(lines []string) int {
+    slopes := [][]int{
+        {1, 1},
+        {1, 3},
+        {1, 5},
+        {1, 7},
+        {2, 1},
+    }
+
+    total := 1
+    for _, slope := range slopes {
+        total *= CountTrees(lines, slope[0], slope[1])
     }
 
     return total
