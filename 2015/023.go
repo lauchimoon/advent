@@ -47,9 +47,7 @@ func Part1(lines []string) int {
 func Part2(lines []string) int {
 	registers["a"] = 1
 	registers["b"] = 0
-	program := LoadProgram(lines)
-	Interpret(program)
-	return registers["b"]
+	return Part1(lines)
 }
 
 func LoadProgram(lines []string) []Instruction {
