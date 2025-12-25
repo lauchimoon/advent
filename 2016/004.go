@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sort"
 	"slices"
+	"unicode"
 )
 
 type Pair struct {
@@ -32,18 +33,50 @@ func main() {
 		rooms = append(rooms, scanner.Text())
 	}
 
-	fmt.Println("Part 1:", Part1(rooms))
+	part1Result, validRooms := Part1(rooms)
+	fmt.Println("Part 1:", part1Result)
+	fmt.Println("Part 2:", Part2(validRooms))
 }
 
-func Part1(rooms []string) int {
+func Part1(rooms []string) (int, []string) {
 	total := 0
+	validRooms := []string{}
 	for _, room := range rooms {
 		check, id := IsValidRoom(room)
 		if check {
+			validRooms = append(validRooms, room)
 			total += id
 		}
 	}
-	return total
+	return total, validRooms
+}
+
+func Part2(validRooms []string) int {
+	for _, room := range validRooms {
+		fields := strings.Split(room[:strings.Index(room, "[")], "-")
+		encryptedName := strings.Join(fields[:len(fields)-1], "-")
+		shift, _ := strconv.Atoi(fields[len(fields)-1])
+		decrypted := Decrypt(encryptedName, shift)
+
+		if decrypted == "northpole object storage" {
+			return shift
+		}
+	}
+
+	return -1
+}
+
+func Decrypt(s string, shift int) string {
+	r := []rune(s)
+	for i := range s {
+		if r[i] == '-' {
+			r[i] = ' '
+		} else if unicode.IsLetter(r[i]) {
+			r[i] = rune(int(r[i] - 'a') + shift) % 26 + 'a'
+		}
+	}
+
+	return string(r)
 }
 
 func IsValidRoom(room string) (bool, int) {
